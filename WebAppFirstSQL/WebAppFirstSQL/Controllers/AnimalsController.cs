@@ -7,5 +7,9 @@ namespace WebAppFirstSQL.Controllers;
 [Route("api/[controller]")]
 public class AnimalsController : ControllerBase
 {
-    
+    [HttpGet]
+    public IActionResult GetAnimals()
+    {
+        return Ok();
+    }
 }
