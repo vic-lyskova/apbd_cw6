@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using WebAppFirstSQL.Models;
 
 namespace WebAppFirstSQL.Controllers;
 
@@ -17,9 +18,32 @@ public class AnimalsController : ControllerBase
     [HttpGet]
     public IActionResult GetAnimals()
     {
-        
+        //Open connection
         SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("Default"));
         connection.Open();
-        return Ok();
+
+        //Define command
+        SqlCommand command = new SqlCommand();
+        command.Connection = connection;
+        command.CommandText = "SELECT * FROM ANIMAL;";
+
+        //Execute command
+        var reader = command.ExecuteReader();
+
+        List<Animal> animals = new List<Animal>();
+
+        int idAnimalOriginal = reader.GetOrdinal("IdAnimal");
+        int nameOrdinal = reader.GetOrdinal("Name");
+        
+        while (reader.Read())
+        {
+            animals.Add(new Animal()
+            {
+                IdAnimal = reader.GetInt32(idAnimalOriginal),
+                Name = reader.GetString(nameOrdinal)
+            });
+        }
+            
+        return Ok(animals);
     }
 }
