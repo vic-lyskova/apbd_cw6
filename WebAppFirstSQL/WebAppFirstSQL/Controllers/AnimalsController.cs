@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using WebAppFirstSQL.DTOs;
 using WebAppFirstSQL.Models;
 
 namespace WebAppFirstSQL.Controllers;
@@ -45,5 +46,11 @@ public class AnimalsController : ControllerBase
         }
             
         return Ok(animals);
+    }
+
+    [HttpPost]
+    public IActionResult AddAnimal(AddAnimal animal)
+    {
+        return Created("", null);
     }
 }
