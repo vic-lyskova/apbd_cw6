@@ -20,7 +20,7 @@ public class AnimalsController : ControllerBase
     public IActionResult GetAnimals()
     {
         //Open connection
-        SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("Default"));
+        using SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("Default"));
         connection.Open();
 
         //Define command
@@ -51,6 +51,19 @@ public class AnimalsController : ControllerBase
     [HttpPost]
     public IActionResult AddAnimal(AddAnimal animal)
     {
+        //Open connection
+        using SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("Default"));
+        connection.Open();
+
+        //Define command
+        using SqlCommand command = new SqlCommand();
+        command.Connection = connection;
+        
+        command.CommandText = "INSERT INTO ANIMAL VALUES (@animalName, @, @...);";
+        command.Parameters.AddWithValue("@animalName", animal.Name);
+
+        command.ExecuteNonQuery();
+        
         return Created("", null);
     }
 }
