@@ -133,4 +133,35 @@ public class AnimalsController : ControllerBase
 
         return NoContent();
     }
+
+
+    [HttpDelete("{idAnimal:int}")]
+    public IActionResult DeleteAnimal(int idAnimal)
+    {
+        using SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("Default"));
+        connection.Open();
+
+        using SqlCommand selectToCheckCommand = new SqlCommand();
+        selectToCheckCommand.Connection = connection;
+
+        selectToCheckCommand.CommandText = "SELECT * FROM Animal WHERE IdAnimal=" + idAnimal;
+
+        var reader = selectToCheckCommand.ExecuteReader();
+
+        if (!reader.Read())
+        {
+            return NotFound("No animal with id " + idAnimal);
+        }
+        
+        reader.Close();
+
+        using SqlCommand deleteCommand = new SqlCommand();
+        deleteCommand.Connection = connection;
+
+        deleteCommand.CommandText = "DELETE FROM Animal WHERE IdAnimal=" + idAnimal;
+        
+        deleteCommand.ExecuteNonQuery();
+        
+        return NoContent();
+    }
 }
