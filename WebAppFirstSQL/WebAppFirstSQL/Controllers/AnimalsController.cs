@@ -18,6 +18,7 @@ public class AnimalsController : ControllerBase
         _configuration = configuration;
     }
 
+    
     [HttpGet]
     public IActionResult GetAnimals(string orderBy = "name")
     {
@@ -64,10 +65,13 @@ public class AnimalsController : ControllerBase
                 Area = reader.GetString(areaOrdinal)
             });
         }
+        
+        reader.Close();
 
         return Ok(animals);
     }
 
+    
     [HttpPost]
     public IActionResult AddAnimal(AddAnimal animal)
     {
@@ -89,5 +93,44 @@ public class AnimalsController : ControllerBase
         command.ExecuteNonQuery();
 
         return Created();
+    }
+
+    
+    [HttpPut("{idAnimal:int}")]
+    public IActionResult UpdateAnimal(int idAnimal, AddAnimal animal)
+    {
+        using SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("Default"));
+        connection.Open();
+
+        using SqlCommand selectToCheckCommand = new SqlCommand();
+        selectToCheckCommand.Connection = connection;
+
+        selectToCheckCommand.CommandText = "SELECT * FROM Animal WHERE IdAnimal=" + idAnimal;
+
+        var reader = selectToCheckCommand.ExecuteReader();
+
+        if (!reader.Read())
+        {
+            return NotFound("No animal with id " + idAnimal);
+        }
+        
+        reader.Close();
+
+        using SqlCommand updateCommand = new SqlCommand();
+        updateCommand.Connection = connection;
+
+        updateCommand.CommandText =
+            "UPDATE Animal " +
+            "SET Name=@animalName, Description=@animalDescription, Category=@animalCategory, Area=@animalArea " +
+            "WHERE IdAnimal=" + idAnimal;
+
+        updateCommand.Parameters.AddWithValue("@animalName", animal.Name);
+        updateCommand.Parameters.AddWithValue("@animalDescription", animal.Description);
+        updateCommand.Parameters.AddWithValue("@animalCategory", animal.Category);
+        updateCommand.Parameters.AddWithValue("@animalArea", animal.Area);
+
+        updateCommand.ExecuteNonQuery();
+
+        return NoContent();
     }
 }
