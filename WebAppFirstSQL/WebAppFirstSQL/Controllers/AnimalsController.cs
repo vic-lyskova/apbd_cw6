@@ -36,7 +36,7 @@ public class AnimalsController : ControllerBase
         connection.Open();
 
         //Define command
-        SqlCommand command = new SqlCommand();
+        using SqlCommand command = new SqlCommand();
         command.Connection = connection;
         command.CommandText = "SELECT * FROM ANIMAL ORDER BY " + orderBy;
 
@@ -79,11 +79,15 @@ public class AnimalsController : ControllerBase
         using SqlCommand command = new SqlCommand();
         command.Connection = connection;
 
-        command.CommandText = "INSERT INTO ANIMAL VALUES (@animalName, @, @...);";
+        command.CommandText = "INSERT INTO ANIMAL VALUES (@animalName, @animalDescription, @animalCategory, @animalArea);";
+        
         command.Parameters.AddWithValue("@animalName", animal.Name);
+        command.Parameters.AddWithValue("@animalDescription", animal.Description);
+        command.Parameters.AddWithValue("@animalCategory", animal.Category);
+        command.Parameters.AddWithValue("@animalArea", animal.Area);
 
         command.ExecuteNonQuery();
 
-        return Created("", null);
+        return Created();
     }
 }
