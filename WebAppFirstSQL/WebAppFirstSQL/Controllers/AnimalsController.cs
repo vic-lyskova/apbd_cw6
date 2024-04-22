@@ -86,7 +86,14 @@ public class AnimalsController : ControllerBase
         command.CommandText = "INSERT INTO ANIMAL VALUES (@animalName, @animalDescription, @animalCategory, @animalArea);";
         
         command.Parameters.AddWithValue("@animalName", animal.Name);
-        command.Parameters.AddWithValue("@animalDescription", animal.Description);
+        if (animal.Description.Length == 0)
+        {
+            command.Parameters.AddWithValue("@animalDescription", DBNull.Value);
+        }
+        else
+        {
+            command.Parameters.AddWithValue("@animalDescription", animal.Description);
+        }
         command.Parameters.AddWithValue("@animalCategory", animal.Category);
         command.Parameters.AddWithValue("@animalArea", animal.Area);
 
@@ -125,7 +132,14 @@ public class AnimalsController : ControllerBase
             "WHERE IdAnimal=" + idAnimal;
 
         updateCommand.Parameters.AddWithValue("@animalName", animal.Name);
-        updateCommand.Parameters.AddWithValue("@animalDescription", animal.Description);
+        if (animal.Description.Length == 0)
+        {
+            updateCommand.Parameters.AddWithValue("@animalDescription", DBNull.Value);
+        }
+        else
+        {
+            updateCommand.Parameters.AddWithValue("@animalDescription", animal.Description);
+        }
         updateCommand.Parameters.AddWithValue("@animalCategory", animal.Category);
         updateCommand.Parameters.AddWithValue("@animalArea", animal.Area);
 
